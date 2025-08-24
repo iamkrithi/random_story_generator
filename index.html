@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Random Story Generator</title>
+  <style>
+    body {
+  font-family: 'Segoe UI', sans-serif;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  position: relative;
+  z-index: 0;
+}
+    h1 {
+      margin-top:8px;
+      color: #391e8a;
+      font-size: 3.9rem;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size:1.3em;
+    }
+    select, button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+    .story-box {
+      background: white;
+      padding: 25px;
+      margin-top: 30px;
+      border-radius: 12px;
+      max-width: 900px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      font-size: 18px;
+      line-height: 1.8;
+      color: #1f2937;
+    }
+    .background-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('download.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(10px);
+  z-index: -1;
+  opacity:0.8;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.controls button {
+  font-size: 24px;
+  padding: 10px 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #4f46e5;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.controls button:hover {
+  background-color: #3730a3;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="background-blur"></div>
+  <h1>Random Story Generator</h1>
+
+
+    <label>Theme:
+      <select id="theme">
+        <option>Adventure</option>
+        <option>Fantasy</option>
+        <option>Mystery</option>
+        <option>Romance</option>
+        <option>Horror</option>
+        <option>Comedy</option>
+        <option>Mythology</option>
+        <option>Historical</option>
+      </select>
+    </label>
+
+    <label>Story lead:
+      <select id="character">
+        <option>Explorer</option>
+        <option>Princess</option>
+        <option>Detective</option>
+        <option>Inventor</option>
+        <option>Knight</option>
+        <option>Witch</option>
+        <option>Robot</option>
+        <option>Alien</option>
+      </select>
+    </label>
+
+    <label>Environment:
+      <select id="setting">
+        <option>Hidden Jungle</option>
+        <option>Ancient Castle</option>
+        <option>Distant Planet</option>
+        <option>Enchanted Forest</option>
+        <option>Busy City</option>
+        <option>Old Library</option>
+        <option>Mountain Village</option>
+      </select>
+    </label>
+
+    <label>Artifact:
+      <select id="object">
+        <option>Golden Compass</option>
+        <option>Magic Wand</option>
+        <option>Time Machine</option>
+        <option>Ancient Scroll</option>
+        <option>Flying Boots</option>
+        <option>Crystal Amulet</option>
+      </select>
+    </label>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <button onclick="generateStory()">Generate Story</button>
+    <div class="controls">
+    <button onclick="startReading()"><i class="fas fa-play"></i></button>  <!-- Play Button Icon -->
+    <button onclick="pause()"><i class="fas fa-pause"></i></button>
+    <button onclick="stopReading()"><i class="fas fa-stop"></i></button>  <!-- Stop Button Icon -->
+    </div>
+    <div class="story-box" id="storyBox">
+      Your story will appear here.
+    </div>
+  </div>
+
+  <script>
+    const storyThemes = {
+  adventure: {
+    intro: [
+      "One bright morning, a brave {character} packed some food, tied their shoes tightly, and walked into the {setting} to search for the {object} that many believed was lost forever.",
+      "It was a warm day when the fearless {character} decided to start their great journey into the {setting}, hoping to discover the mysterious {object}.",
+      "In a small village near the hills, a young {character} dreamed of big adventures and finally took the first step into the wild {setting} in search of the legendary {object}."
+    ],
+    challenge: [
+      "As the sun disappeared behind clouds, the {character} realized they had lost the map, and finding the {object} would be even harder now.",
+      "Thick vines and sharp rocks made it difficult for the {character} to continue moving through the dense jungle.",
+      "A loud growl came from the bushes, and the {character} stood very still, knowing danger was close."
+    ],
+    climax: [
+      "Just when they thought all hope was lost, the {character} found an old tree stump glowing faintly, and inside it was the {object}, shining brightly.",
+      "The {character} used their strength and courage to open a heavy stone door that led to a hidden cave filled with secrets and the long-lost {object}.",
+      "With shaking hands, the {character} lifted the {object} from the ancient altar and felt its power flow through them."
+    ],
+    ending: [
+      "The journey had changed the {character}, and they returned to their home in the village with the {object} and many stories to tell.",
+      "Everyone gathered to listen as the {character} described the {setting}, the dangers faced, and how they found the {object} against all odds.",
+      "Now known as a hero, the {character} kept the {object} safe and started teaching others how to be brave and curious."
+    ]
+  },
+  fantasy: {
+    intro: [
+      "In a land full of magic, the {character} discovered an old book in the {setting} that held the secret to finding the {object}.",
+      "One evening, while walking through the enchanted {setting}, the {character} stumbled upon a glowing stone, which whispered the words, 'Find the {object} and your destiny will change.'",
+      "Under the light of a full moon, the {character} saw a mysterious figure who handed them a map leading to the hidden {object} deep within the {setting}."
+    ],
+    challenge: [
+      "The journey was not easy; dark shadows moved through the {setting}, and the {character} had to be quick to avoid danger.",
+      "A heavy storm forced the {character} to take shelter, but the wind howled through the {setting}, and it was impossible to sleep.",
+      "While crossing the old bridge, the {character} saw a fierce dragon guarding the path and knew they had to find a way to get past it."
+    ],
+    climax: [
+      "At last, after days of travel, the {character} reached a hidden cave where the {object} was kept in a golden chest, glowing in the dark.",
+      "Using the ancient spell they had learned, the {character} opened the door to a secret chamber, revealing the long-forgotten {object}.",
+      "The {character} finally stood before the {object}, realizing that they had been chosen to protect it forever."
+    ],
+    ending: [
+      "With the {object} in hand, the {character} returned to the village as a hero, telling everyone about the wonders they had seen.",
+      "The {object} gave the {character} great power, and they decided to use it to protect their world from dark magic.",
+      "As the {character} looked at the {object}, they understood that their life would never be the same again, for they were now part of something much bigger."
+    ]
+  },
+  mystery: {
+    intro: [
+      "On a cold night, the {character} walked into the old {setting}, where whispers of an unsolved mystery had been heard for years about the missing {object}.",
+      "The {character} had heard rumors of a strange disappearance in the {setting} and decided to investigate, hoping to find the {object} that was last seen there.",
+      "A shadow passed across the moon as the {character} entered the {setting}, where every door and window seemed locked, and the only clue was the mysterious {object}."
+    ],
+    challenge: [
+      "As the {character} searched the dusty library, they realized someone was watching them from the shadows, making it hard to trust anyone.",
+      "The trail had gone cold, but the {character} could still hear strange noises coming from the old building, making them question everything they knew.",
+      "A secret note left behind led the {character} to an abandoned building, where they had to solve a puzzle to find the next clue."
+    ],
+    climax: [
+      "In a hidden room behind a bookshelf, the {character} found the {object}, but they were not alone—someone was following them.",
+      "The {character} unlocked a secret door with the last key and discovered the {object}, only to be confronted by the true villain of the story.",
+      "With a deep breath, the {character} opened the mysterious chest in the corner of the room and found the {object}, realizing they had been tricked all along."
+    ],
+    ending: [
+      "The case was solved, and the {object} was returned to its rightful place, but the {character} knew the mystery wasn't really over.",
+      "Everyone celebrated the {character} for their sharp mind and bravery, but the mystery lingered in the {setting}, waiting for the next curious soul to uncover the truth.",
+      "With the mystery solved, the {character} walked away, wondering what other secrets the world was hiding."
+    ]
+  },
+  romance: {
+    intro: [
+      "In a quiet town, the {character} met someone who would change their life forever while walking through the {setting}.",
+      "The {character} had always dreamed of meeting someone special, and one day, in the {setting}, they crossed paths with the one person who would make their heart race.",
+      "It was a chilly evening when the {character} bumped into a stranger in the {setting}, and from that moment, everything changed."
+    ],
+    challenge: [
+      "The {character} tried to ignore their feelings, but the more they saw the other person, the more they realized that love was not something they could easily avoid.",
+      "With a deep sigh, the {character} watched from afar as the person they cared for spoke to someone else, wondering if their love would ever be returned.",
+      "Despite their feelings, the {character} struggled with their fears and doubts, unsure whether to take the first step and confess their love."
+    ],
+    climax: [
+      "One rainy evening, the {character} finally gathered the courage to tell the person how they felt, and to their surprise, they felt the same way.",
+      "Under a starry sky, the {character} confessed their love, and the other person smiled, holding out the {object} as a symbol of their feelings.",
+      "In the midst of a busy {setting}, the {character} grabbed the other person's hand and pulled them close, whispering words they had long wanted to say."
+    ],
+    ending: [
+      "From that moment, the {character} and their love spent their days exploring the {setting}, their bond growing stronger each day.",
+      "The {character} and their love lived happily, knowing that their connection was something special that would never fade.",
+      "And so, the {character} realized that true love was not about grand gestures, but the quiet moments spent together, holding the {object} close."
+    ]
+  },
+  horror: {
+    intro: [
+      "On a dark, stormy night, the {character} found themselves standing in front of an old, abandoned house in the {setting}, where whispers of ghosts filled the air.",
+      "The {character} was drawn to the eerie {setting}, where every sound seemed to echo and every shadow felt alive with fear.",
+      "It was a quiet night when the {character} entered the {setting}, but the silence was broken by the soft sound of footsteps following behind them."
+    ],
+    challenge: [
+      "The {character} could feel the temperature drop as they walked deeper into the {setting}, and they knew something was watching them.",
+      "Every step the {character} took was met with creaks and moans, and the {object} they had found seemed to be the key to unlocking something dark.",
+      "Suddenly, the {character} found themselves trapped in a room with no way out, and strange shadows moved all around them."
+    ],
+    climax: [
+      "The {character} discovered the horrifying truth about the {object}, and they realized it had been cursed, bringing them face to face with a powerful ghost.",
+      "As the {character} held the {object}, the walls of the {setting} began to shake, and a dark figure appeared, demanding they return what was taken.",
+      "In a final confrontation, the {character} had no choice but to destroy the {object} to escape the curse that had haunted them."
+    ],
+    ending: [
+      "The {character} survived, but they never spoke of the horrors they faced, and the {object} was buried far away, where no one could ever find it.",
+      "The {character} returned home, but the nightmares continued, as the ghostly figure of the {setting} haunted their dreams forever.",
+      "Though they had escaped, the {character} knew that evil could always return, and the {object} would remain a part of their cursed past."
+    ]
+  },
+  comedy: {
+    intro: [
+      "One day, the {character} was walking through the {setting} when they accidentally tripped over a banana peel and fell right into a giant puddle.",
+      "In the middle of a busy day, the {character} tried to impress someone by juggling apples in the {setting}, but they ended up hitting a stranger on the head.",
+      "The {character} had always wanted to be a hero, but when they found the {object}, they couldn't stop laughing because it was the most ridiculous thing they'd ever seen."
+    ],
+    challenge: [
+      "The {character} was trying to fix a broken machine, but they accidentally made it explode in a cloud of smoke, making everyone laugh.",
+      "As the {character} tried to solve a serious problem, their pants fell down, and they couldn't stop giggling at the most awkward moment.",
+      "When the {character} tried to sneak past the guards, their shoes squeaked loudly, causing them to be caught immediately."
+    ],
+    climax: [
+      "The {character} finally found the {object}, but instead of being useful, it turned out to be a whoopee cushion that made everyone burst out laughing.",
+      "At the grand event, the {character} was supposed to give an important speech, but they accidentally sprayed whipped cream all over the crowd.",
+      "In the middle of a fight, the {character} pulled out a rubber chicken and swung it at the enemy, causing everyone to laugh so hard they couldn’t take them seriously."
+    ],
+    ending: [
+      "The {character} learned that being funny wasn’t about trying to be perfect; it was about enjoying the silly moments in life.",
+      "With the {object} in hand, the {character} became the hero of the day—not because they were strong or smart, but because they made everyone laugh.",
+      "In the end, the {character} realized that sometimes the best way to face a problem is with a good joke and a smile."
+    ]
+  },
+  mythology: {
+    intro: [
+      "Long ago, the gods of the {setting} sent the {character} on a quest to find the {object} that would save the world from destruction.",
+      "In the heart of the {setting}, the {character} discovered an ancient artifact that promised to lead them to the {object}, hidden in a forgotten temple.",
+      "The {character} was chosen by the gods to retrieve the {object}, which was said to hold the power to control the fate of all the creatures in the {setting}."
+    ],
+    challenge: [
+      "As the {character} journeyed through the {setting}, they faced powerful monsters sent by the gods to stop them from reaching the {object}.",
+      "Every path the {character} took was blocked by mythical creatures, forcing them to use their wits and bravery to continue their quest.",
+      "The {character} discovered that the {object} was guarded by a riddle, and they had to answer correctly to move forward."
+    ],
+    climax: [
+      "Finally, after facing many challenges, the {character} arrived at the temple, where the {object} glowed with divine energy, waiting for them to claim it.",
+      "The {character} faced the god of wisdom, who tested their courage and intelligence before allowing them to take the {object}.",
+      "After defeating the powerful guardian, the {character} finally reached the sacred chamber and claimed the {object}, feeling the power surge through them."
+    ],
+    ending: [
+      "The {character} returned to the gods with the {object}, knowing that their journey had not only saved the world but had also changed them forever.",
+      "With the {object} in hand, the {character} restored peace to the {setting}, and the gods honored them with a place in the stars.",
+      "As the {character} looked at the {object}, they realized that their true power lay not in the artifact, but in their heart and courage."
+    ]
+  },
+  historical: {
+    intro: [
+      "In the year 1492, the {character} set sail from the {setting}, determined to find the {object} that would change the course of history.",
+      "The {character} had always been fascinated by ancient ruins, and when they discovered an old map, they decided to search for the {object} buried deep in the {setting}.",
+      "During the great war, the {character} was given a secret mission to find the {object}, which was believed to have been lost during the battle."
+    ],
+    challenge: [
+      "The {character} faced many dangers, from treacherous weather to hostile armies, but they pressed on, knowing the {object} was within reach.",
+      "While traveling through the dangerous desert, the {character} encountered a group of bandits who wanted to steal the {object} from them.",
+      "The {character} had to navigate through enemy lines, avoiding detection and figuring out how to keep the {object} safe."
+    ],
+    climax: [
+      "After months of searching, the {character} found the {object} hidden in a forgotten temple, guarded by fierce warriors who would do anything to protect it.",
+      "With their knowledge of ancient languages, the {character} finally unlocked the secret of the {object}, which had been hidden for centuries.",
+      "The {character} managed to escape the war zone with the {object}, realizing its true value was not in gold, but in the history it held."
+    ],
+    ending: [
+      "The {character} returned home with the {object}, where it was celebrated as a priceless artifact of historical importance.",
+      "After many years, the {object} was placed in a museum, and the {character} was remembered as the hero who found it.",
+      "The {character} knew that history would remember their adventure, and the {object} would live on forever as a symbol of courage and discovery."
+    ]
+  }
+};
+
+
+    function getRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function replaceTags(text, character, setting, object) {
+      return text.replace(/{character}/g, character)
+                 .replace(/{setting}/g, setting)
+                 .replace(/{object}/g, object);
+    }
+
+    /*function generateStory() {
+      const theme = document.getElementById('theme').value.toLowerCase();
+      const character = document.getElementById('character').value;
+      const setting = document.getElementById('setting').value;
+      const object = document.getElementById('object').value;
+
+      const themeSet = storyThemes[theme];
+      let story = [];
+
+      for (let i = 0; i < 5; i++) story.push(replaceTags(getRandom(themeSet.intro), character, setting, object));
+      for (let i = 0; i < 5; i++) story.push(replaceTags(getRandom(themeSet.challenge), character, setting, object));
+      for (let i = 0; i < 5; i++) story.push(replaceTags(getRandom(themeSet.climax), character, setting, object));
+      for (let i = 0; i < 5; i++) story.push(replaceTags(getRandom(themeSet.ending), character, setting, object));
+
+      document.getElementById('storyBox').innerText = story.join(" ");
+    }*/
+   let synth = window.speechSynthesis;
+   let utterance;
+   let isPaused = false;
+
+  function generateStory() {
+  const theme = document.getElementById("theme").value.toLowerCase();
+  const character = document.getElementById("character").value;
+  const setting = document.getElementById("setting").value;
+  const object = document.getElementById("object").value;
+
+  const themeData = storyThemes[theme];
+
+  // Pick 6 sentences from each section
+  const introSentences = getRandomItems(themeData.intro, 6);
+  const challengeSentences = getRandomItems(themeData.challenge, 6);
+  const climaxSentences = getRandomItems(themeData.climax, 6);
+  const endingSentences = getRandomItems(themeData.ending, 6);
+
+  // Replace placeholders
+  const replacePlaceholders = (sentence) =>
+    sentence.replace(/{character}/g, character)
+            .replace(/{setting}/g, setting)
+            .replace(/{object}/g, object);
+
+  const fullStory = [
+    ...introSentences,
+    ...challengeSentences,
+    ...climaxSentences,
+    ...endingSentences
+  ].map(replacePlaceholders);
+
+  // Group into 3–4 paragraphs (e.g., 6+6+6+6)
+  const paragraphCount = 4;
+  const sentencesPerParagraph = fullStory.length / paragraphCount;
+
+  let storyHTML = "";
+  for (let i = 0; i < paragraphCount; i++) {
+    const start = i * sentencesPerParagraph;
+    const end = start + sentencesPerParagraph;
+    const paragraph = fullStory.slice(start, end).join(" ");
+    storyHTML += `<p>${paragraph}</p>`;
+  }
+
+  document.getElementById("storyBox").innerHTML = storyHTML;
+}
+
+// Helper: Get n random items from array
+function getRandomItems(arr, count) {
+  const shuffled = arr.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+function startReading() {
+  const text = document.getElementById("storyBox").innerText;
+  if (synth.speaking && isPaused) {
+    synth.resume();
+    isPaused = false;
+  } else {
+    utterance = new SpeechSynthesisUtterance(text);
+    synth.speak(utterance);
+  }
+}
+
+function pause() {
+  if (synth.speaking && !synth.paused) {
+    synth.pause();
+    isPaused = true;
+  }
+}
+
+function stopReading() {
+  synth.cancel();
+  isPaused = false;
+}
+
+
+  </script>
+</body>
+</html>
